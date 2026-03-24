@@ -1,0 +1,121 @@
+---
+title: "Text: Words 2"
+author: "zixu liu"
+editor: visual
+format:
+  html:
+    embed-resources: true
+    code-fold: true  # new
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r setup}
+library(tidyverse)
+library(wordcloud)
+library(tm)
+library(tidytext)
+```
+
+# Romeo and Juliet
+
+"Oh Romeo, Romeo, wherefore art thou Romeo?"
+
+Full script - <http://shakespeare.mit.edu/romeo_juliet/full.html>
+
+Let's explore...
+
+1.  Whose name appears more often, Romeo or Juliet?
+2.  Perform "pre-cleaning" on the file to remove extraneous characters.
+3.  Identify which word appears most often in the text
+
+# Read in Romeo and Juliet
+
+### Option 1 - from file
+
+```{r}
+RandJ0 <- read_file("Romeo and Juliet Entire Play.txt")
+```
+
+### Option 2 - directly
+
+```         
+```
+
+# Term Frequency
+
+Whose name appears more often, Romeo or Juliet?
+
+```{r}
+RandJ0_lower <- str_to_lower(RandJ0)
+romeo_count <- str_count(RandJ0_lower,"romeo")
+juliet_count <- str_count(RandJ0_lower,"juliet")
+print(paste("romeo #:", romeo_count))
+print(paste("juliet #:", juliet_count))
+```
+
+# Pre-cleaning / Tokenize
+
+Perform "pre-cleaning" on the file to remove extraneous characters.
+
+```{r}
+stop_word <- readRDS("stopwords_ws.rds")
+stop_word <- data.frame(word = stop_word)
+
+```
+
+```{r}
+RandJ0_cleaned <- RandJ0_lower |>
+  str_replace_all("[[:punct:]]", " ") |>
+  str_replace_all("\\n", " ") |>
+  str_split("\\s+") |>
+  unlist()
+RandJ0_cleaned_df <- data.frame(word = RandJ0_cleaned)
+RandJ0_cleaned_df <-RandJ0_cleaned_df |> 
+  anti_join(stop_word)
+
+```
+
+# Wordcloud
+
+In case we get here during in-class coding and you want to access what I have, here are two rds files...that I'll talk about when we get here.
+
+```{r}
+RandJ <- readRDS("RandJ.rds")
+
+```
+
+# n-grams
+
+```{r}
+RandJ0_cleaned <- RandJ0_lower |>
+  str_replace_all("[[:punct:]]", " ") |>
+  str_replace_all("\\n", " ") 
+
+bigram_df <- tibble(text = RandJ0_cleaned)
+
+bigram_df <- bigram_df |>
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) |>
+  separate(bigram, c("word1", "word2"), sep = " ") |> 
+  filter(!word1 %in% stopwords("en")) |> 
+  filter(!word2 %in% stopwords("en"))
+```
+
+# Visualization of n-grams
+
+```{r}
+bigram_count <- bigram_df |>
+  unite(bigram, word1, word2, sep = " ") |>
+  count(bigram, sort = TRUE)
+
+bigram_count |> 
+  pull(bigram) |> 
+  wordcloud(
+    min.freq = 5,
+    max.words = 10,
+    random.order = FALSE,
+  )
+
+```
