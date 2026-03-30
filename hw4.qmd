@@ -119,3 +119,15 @@ bigram_count |>
   )
 
 ```
+
+Comments:
+
+Reviewer Comments\
+\
+1. I like that the intro is clear and easy to follow. Maybe just add a quick sentence at the end summarizing what you found overall.\
+\
+2. The term frequency section makes sense, but it could help to briefly explain what the counts actually tell us about the text.\
+\
+3. The steps for cleaning and tokenizing are laid out nicely. You could also add one short sentence explaining why those steps are important.\
+\
+Code Suggestions: Maybe add a few small comments in the code to explain what each step is doing, especially in the preprocessing section.
