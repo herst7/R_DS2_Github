@@ -66,6 +66,8 @@ stop_word <- data.frame(word = stop_word)
 
 ```
 
+clean the stop word, sign, punctuation... so that we can focus on some word with meaning
+
 ```{r}
 RandJ0_cleaned <- RandJ0_lower |>
   str_replace_all("[[:punct:]]", " ") |>
@@ -90,6 +92,7 @@ RandJ <- readRDS("RandJ.rds")
 # n-grams
 
 ```{r}
+#cleaning
 RandJ0_cleaned <- RandJ0_lower |>
   str_replace_all("[[:punct:]]", " ") |>
   str_replace_all("\\n", " ") 
@@ -109,7 +112,9 @@ bigram_df <- bigram_df |>
 bigram_count <- bigram_df |>
   unite(bigram, word1, word2, sep = " ") |>
   count(bigram, sort = TRUE)
-
+#bigram count table
+bigram_count
+#visualization
 bigram_count |> 
   pull(bigram) |> 
   wordcloud(
@@ -119,6 +124,16 @@ bigram_count |>
   )
 
 ```
+
+top 3 bigram:
+
+friar laurence
+
+lady capulet
+
+thou art
+
+Romeo is the most conmon word
 
 Comments:
 
